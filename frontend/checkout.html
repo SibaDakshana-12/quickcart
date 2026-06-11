@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ShopNow</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">ShopNow</a>
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+            <a href="profile.html" id="nav-profile" style="display:none">Profile</a>
+            <a href="login.html" id="nav-login">Login</a>
+            <a href="#" id="nav-logout" style="display:none">Logout</a>
+        </div>
+    </nav>
+
+    <!-- CHECKOUT SECTION -->
+    <section class="section">
+        <h2>Checkout</h2>
+
+        <div style="display:grid;
+                    grid-template-columns: 1fr 340px;
+                    gap:24px; align-items:start;">
+
+            <!-- LEFT: SHIPPING FORM -->
+            <div>
+                <div style="background:#fff; border-radius:12px;
+                            padding:28px;
+                            box-shadow:0 2px 8px rgba(0,0,0,0.06);
+                            margin-bottom:24px;">
+
+                    <h3 style="font-size:18px; margin-bottom:20px;
+                               color:#1a1a2e;">
+                        Shipping Address
+                    </h3>
+
+                    <div class="error-msg" id="error-msg"></div>
+
+                    <div class="form-group">
+                        <label>Full Address</label>
+                        <input type="text" id="address"
+                               placeholder="House no, Street, Area">
+                    </div>
+
+                    <div style="display:grid;
+                                grid-template-columns:1fr 1fr;
+                                gap:16px;">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" id="city"
+                                   placeholder="Your city">
+                        </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="state"
+                                   placeholder="Your state">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pincode</label>
+                        <input type="text" id="pincode"
+                               placeholder="6 digit pincode"
+                               maxlength="6">
+                    </div>
+                </div>
+
+                <!-- PAYMENT METHOD -->
+                <div style="background:#fff; border-radius:12px;
+                            padding:28px;
+                            box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+                    <h3 style="font-size:18px; margin-bottom:20px;
+                               color:#1a1a2e;">
+                        Payment Method
+                    </h3>
+
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+
+                        <label style="display:flex; align-items:center;
+                                      gap:12px; padding:14px;
+                                      border:1.5px solid #ddd;
+                                      border-radius:8px; cursor:pointer;"
+                               id="cod-label">
+                            <input type="radio" name="payment"
+                                   value="COD" checked
+                                   onchange="selectPayment(this)">
+                            <div>
+                                <p style="font-weight:600;">
+                                    Cash on Delivery
+                                </p>
+                                <p style="font-size:13px; color:#888;">
+                                    Pay when order arrives
+                                </p>
+                            </div>
+                        </label>
+
+                        <label style="display:flex; align-items:center;
+                                      gap:12px; padding:14px;
+                                      border:1.5px solid #ddd;
+                                      border-radius:8px; cursor:pointer;"
+                               id="online-label">
+                            <input type="radio" name="payment"
+                                   value="Online" 
+                                   onchange="selectPayment(this)">
+                            <div>
+                                <p style="font-weight:600;">
+                                    Online Payment
+                                </p>
+                                <p style="font-size:13px; color:#888;">
+                                    UPI, Card, Net Banking (Mock)
+                                </p>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: ORDER SUMMARY -->
+            <div style="background:#fff; border-radius:12px;
+                        padding:24px;
+                        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+                        position:sticky; top:80px;">
+
+                <h3 style="font-size:20px; margin-bottom:20px;
+                           color:#1a1a2e;">
+                    Order Summary
+                </h3>
+
+                <div id="order-items"></div>
+
+                <div style="border-top:1.5px solid #eee;
+                            padding-top:16px; margin-top:8px;">
+
+                    <div style="display:flex; justify-content:space-between;
+                                margin-bottom:10px; font-size:15px;">
+                        <span style="color:#666;">Items Price</span>
+                        <span id="items-price">₹0</span>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between;
+                                margin-bottom:10px; font-size:15px;">
+                        <span style="color:#666;">Shipping</span>
+                        <span id="shipping-price">₹0</span>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between;
+                                font-size:18px; font-weight:700;
+                                padding-top:10px;
+                                border-top:1.5px solid #eee;">
+                        <span>Total</span>
+                        <span id="total-price"
+                              style="color:#e94560;">₹0</span>
+                    </div>
+                </div>
+
+                <button onclick="placeOrder()"
+                    id="place-order-btn"
+                    style="width:100%; padding:14px; margin-top:20px;
+                           background:#e94560; color:#fff;
+                           border:none; border-radius:8px;
+                           font-size:16px; font-weight:600;
+                           cursor:pointer; transition:background 0.2s;"
+                    onmouseover="this.style.background='#c73652'"
+                    onmouseout="this.style.background='#e94560'">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 ShopNow. All rights reserved.</p>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        const loadOrderSummary = () => {
+            if (cart.length === 0) {
+                window.location.href = 'cart.html';
+                return;
+            }
+
+            const itemsPrice = cart.reduce(
+                (sum, item) => sum + item.price * item.qty, 0
+            );
+            const shippingPrice = itemsPrice > 500 ? 0 : 50;
+            const totalPrice = itemsPrice + shippingPrice;
+
+            document.getElementById('order-items').innerHTML =
+                cart.map(item => `
+                    <div style="display:flex; justify-content:space-between;
+                                align-items:center; margin-bottom:12px;
+                                padding-bottom:12px;
+                                border-bottom:1px solid #f0f0f0;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <img src="${item.image}"
+                                 style="width:48px; height:48px;
+                                        object-fit:cover; border-radius:6px;"
+                                 onerror="this.src='https://via.placeholder.com/48'">
+                            <div>
+                                <p style="font-size:14px; font-weight:500;">
+                                    ${item.name}
+                                </p>
+                                <p style="font-size:12px; color:#888;">
+                                    Qty: ${item.qty}
+                                </p>
+                            </div>
+                        </div>
+                        <p style="font-weight:600; font-size:14px;">
+                            ₹${(item.price * item.qty).toLocaleString()}
+                        </p>
+                    </div>
+                `).join('');
+
+            document.getElementById('items-price').textContent =
+                '₹' + itemsPrice.toLocaleString();
+            document.getElementById('shipping-price').textContent =
+                shippingPrice === 0 ? 'FREE' : '₹' + shippingPrice;
+            document.getElementById('total-price').textContent =
+                '₹' + totalPrice.toLocaleString();
+        };
+
+        const selectPayment = (radio) => {
+            document.getElementById('cod-label').style.borderColor = '#ddd';
+            document.getElementById('online-label').style.borderColor = '#ddd';
+            document.getElementById(
+                radio.value === 'COD' ? 'cod-label' : 'online-label'
+            ).style.borderColor = '#e94560';
+        };
+
+        const placeOrder = async () => {
+            const address = document.getElementById('address').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const pincode = document.getElementById('pincode').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+            const btn = document.getElementById('place-order-btn');
+
+            errorMsg.style.display = 'none';
+
+            if (!address || !city || !state || !pincode) {
+                errorMsg.textContent = 'Please fill all shipping details';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (pincode.length !== 6) {
+                errorMsg.textContent = 'Please enter valid 6 digit pincode';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const paymentMethod = document.querySelector(
+                'input[name="payment"]:checked'
+            ).value;
+
+            const itemsPrice = cart.reduce(
+                (sum, item) => sum + item.price * item.qty, 0
+            );
+            const shippingPrice = itemsPrice > 500 ? 0 : 50;
+            const totalPrice = itemsPrice + shippingPrice;
+
+            const orderData = {
+                orderItems: cart.map(item => ({
+                    name: item.name,
+                    qty: item.qty,
+                    image: item.image,
+                    price: item.price,
+                    product: item.id
+                })),
+                shippingAddress: { address, city, state, pincode },
+                paymentMethod,
+                itemsPrice,
+                shippingPrice,
+                totalPrice
+            };
+
+            btn.textContent = 'Placing Order...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    localStorage.removeItem('cart');
+                    updateCartCount();
+                    window.location.href =
+                        `profile.html?order=${data._id}&new=true`;
+                } else {
+                    errorMsg.textContent = data.message;
+                    errorMsg.style.display = 'block';
+                    btn.textContent = 'Place Order';
+                    btn.disabled = false;
+                }
+
+            } catch (error) {
+                errorMsg.textContent = 'Something went wrong. Try again.';
+                errorMsg.style.display = 'block';
+                btn.textContent = 'Place Order';
+                btn.disabled = false;
+            }
+        };
+
+        const user = getUser();
+        if (!user) {
+            window.location.href = 'login.html';
+        } else {
+            loadOrderSummary();
+        }
+
+        document.getElementById('cod-label').style.borderColor = '#e94560';
+    </script>
+</body>
+</html>

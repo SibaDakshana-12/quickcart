@@ -1,0 +1,57 @@
+const connectSocket = () => {
+    const socketScript = document.createElement('script');
+    socketScript.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+    document.head.appendChild(socketScript);
+
+    socketScript.onload = () => {
+        const socket = io('http://localhost:5000');
+
+        socket.on('connect', () => {
+            console.log('Connected to server:', socket.id);
+        });
+
+        socket.on('orderStatusUpdated', (data) => {
+            console.log('Order status updated:', data);
+
+            const statusEl = document.getElementById(
+                `status-text-${data.orderId}`
+            );
+            const trackingEl = document.getElementById(
+                `tracking-${data.orderId}`
+            );
+            const badgeEl = document.getElementById(
+                `badge-${data.orderId}`
+            );
+
+            if (statusEl) {
+                statusEl.textContent = data.status;
+                statusEl.style.color = getStatusColor(data.status);
+            }
+
+            if (badgeEl) {
+                badgeEl.textContent = data.status;
+                badgeEl.style.background = getStatusColor(data.status);
+            }
+
+            if (trackingEl) {
+                trackingEl.style.borderLeftColor =
+                    getStatusColor(data.status);
+                trackingEl.style.background = '#f0fff4';
+
+                setTimeout(() => {
+                    trackingEl.style.background = '#f0f7ff';
+                }, 3000);
+            }
+
+            showToast(`Order status updated: ${data.status}`);
+        });
+
+        socket.on('orderPlaced', (data) => {
+            console.log('New order placed:', data);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+    };
+};
