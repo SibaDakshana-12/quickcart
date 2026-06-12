@@ -34,6 +34,7 @@ A full-stack e-commerce web application with real-time order tracking.
 - Responsive Design
 
 ## Project Structure
+```
 quickcart/
 ├── backend/
 │   ├── config/
@@ -53,20 +54,21 @@ quickcart/
 │   └── package.json
 │
 └── frontend/
-├── css/
-│   └── style.css
-├── js/
-│   ├── auth.js
-│   ├── products.js
-│   └── socket.js
-├── index.html
-├── products.html
-├── product.html
-├── cart.html
-├── checkout.html
-├── profile.html
-├── admin.html
-└── 404.html
+    ├── css/
+    │   └── style.css
+    ├── js/
+    │   ├── auth.js
+    │   ├── products.js
+    │   └── socket.js
+    ├── index.html
+    ├── products.html
+    ├── product.html
+    ├── cart.html
+    ├── checkout.html
+    ├── profile.html
+    ├── admin.html
+    └── 404.html
+```
 
 ## API Endpoints
 
