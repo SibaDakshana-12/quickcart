@@ -1,4 +1,7 @@
-const API = 'http://localhost:5000/api';
+const API = window.location.hostname === '127.0.0.1' || 
+            window.location.hostname === 'localhost'
+    ? 'http://localhost:5000/api'
+    : 'https://quickcart-api-zoje.onrender.com/api';
 
 const getUser = () => {
     const user = localStorage.getItem('user');

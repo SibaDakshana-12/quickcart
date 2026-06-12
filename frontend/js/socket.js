@@ -4,7 +4,12 @@ const connectSocket = () => {
     document.head.appendChild(socketScript);
 
     socketScript.onload = () => {
-        const socket = io('http://localhost:5000');
+        const socketURL = window.location.hostname === '127.0.0.1' ||
+                  window.location.hostname === 'localhost'
+            ? 'http://localhost:5000'
+            : 'https://quickcart-api-zoje.onrender.com';
+
+        const socket = io(socketURL);
 
         socket.on('connect', () => {
             console.log('Connected to server:', socket.id);
