@@ -3,8 +3,8 @@
 A full-stack e-commerce web application with real-time order tracking.
 
 ## Live Demo
-- Frontend: https://quickcart.netlify.app
-- Backend API: https://quickcart-api.onrender.com
+- Frontend: https://quickcart-siba.netlify.app
+- Backend API: https://quickcart-api-zoje.onrender.com
 
 ## Tech Stack
 
