@@ -5,7 +5,7 @@ const connectSocket = () => {
 
     socketScript.onload = () => {
         const socketURL = window.location.hostname === '127.0.0.1' ||
-                  window.location.hostname === 'localhost'
+                          window.location.hostname === 'localhost'
             ? 'http://localhost:5000'
             : 'https://quickcart-api-zoje.onrender.com';
 
@@ -21,11 +21,13 @@ const connectSocket = () => {
             const statusEl = document.getElementById(
                 `status-text-${data.orderId}`
             );
-            const trackingEl = document.getElementById(
-                `tracking-${data.orderId}`
-            );
+
             const badgeEl = document.getElementById(
                 `badge-${data.orderId}`
+            );
+
+            const trackingContainer = document.getElementById(
+                `tracking-container-${data.orderId}`
             );
 
             if (statusEl) {
@@ -38,14 +40,9 @@ const connectSocket = () => {
                 badgeEl.style.background = getStatusColor(data.status);
             }
 
-            if (trackingEl) {
-                trackingEl.style.borderLeftColor =
-                    getStatusColor(data.status);
-                trackingEl.style.background = '#f0fff4';
-
-                setTimeout(() => {
-                    trackingEl.style.background = '#f0f7ff';
-                }, 3000);
+            if (trackingContainer) {
+                trackingContainer.innerHTML =
+                    getProgressBar(data.status, data.orderId);
             }
 
             showToast(`Order status updated: ${data.status}`);

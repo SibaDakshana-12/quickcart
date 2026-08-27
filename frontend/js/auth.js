@@ -29,6 +29,7 @@ const updateNavbar = () => {
         if (navLogin) navLogin.style.display = 'none';
         if (navLogout) navLogout.style.display = 'block';
         if (navProfile) navProfile.style.display = 'block';
+        if (navAdmin) navAdmin.style.display = user.isAdmin ? 'block' : 'none';
     } else {
         if (navLogin) navLogin.style.display = 'block';
         if (navLogout) navLogout.style.display = 'none';

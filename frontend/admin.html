@@ -3,229 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - ShopNow</title>
+    <title>Admin Panel - QuickCart</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <a href="index.html" class="logo">ShopNow</a>
+        <a href="index.html" class="logo">QuickCart</a>
+
         <div class="nav-links">
             <a href="products.html">Products</a>
-            <a href="admin.html" style="color:#e94560;">Admin Panel</a>
+
+            <a href="admin.html"
+               id="nav-admin"
+               style="display:none; color:#e94560;">
+                Admin
+            </a>
+
             <a href="cart.html" class="cart-icon">
                 Cart
                 <span id="cart-count">0</span>
             </a>
-            <a href="profile.html" id="nav-profile" style="display:none">Profile</a>
-            <a href="login.html" id="nav-login">Login</a>
-            <a href="#" id="nav-logout" style="display:none">Logout</a>
+
+            <a href="profile.html"
+               id="nav-profile"
+               style="display:none">
+                Profile
+            </a>
+
+            <a href="login.html" id="nav-login">
+                Login
+            </a>
+
+            <a href="#" id="nav-logout" style="display:none">
+                Logout
+            </a>
         </div>
     </nav>
 
+
     <!-- ADMIN SECTION -->
     <section class="section">
+
         <h2>Admin Panel</h2>
+
 
         <!-- STATS -->
         <div class="admin-stats" id="admin-stats">
+
             <div class="stat-card">
                 <div class="stat-number" id="total-orders">0</div>
                 <div class="stat-label">Total Orders</div>
             </div>
+
             <div class="stat-card">
                 <div class="stat-number" id="pending-orders">0</div>
                 <div class="stat-label">Pending Orders</div>
             </div>
+
             <div class="stat-card">
                 <div class="stat-number" id="delivered-orders">0</div>
                 <div class="stat-label">Delivered Orders</div>
             </div>
+
             <div class="stat-card">
-                <div class="stat-number" id="total-revenue">₹0</div>
+                <div class="stat-number" id="total-revenue">
+                    ₹0
+                </div>
                 <div class="stat-label">Total Revenue</div>
             </div>
+
         </div>
 
-        <!-- ORDERS TABLE -->
-        <h3 style="font-size:18px; margin-bottom:16px; color:#1a1a2e;">
+
+        <!-- ORDERS -->
+        <h3 style="font-size:18px;
+                   margin-bottom:16px;
+                   color:#1a1a2e;">
             All Orders
         </h3>
 
         <div id="orders-container">
-            <div class="loading">Loading orders...</div>
+            <div class="loading">
+                Loading orders...
+            </div>
+        </div>
+
+
+        <!-- PRODUCT MANAGEMENT -->
+        <div style="display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-top:40px;
+                    margin-bottom:16px;
+                    flex-wrap:wrap;
+                    gap:12px;">
+
+            <h3 style="font-size:18px;
+                       color:#1a1a2e;">
+                Product Management
+            </h3>
+
+            <button
+                onclick="openProductForm()"
+                style="padding:10px 18px;
+                       background:#e94560;
+                       color:#fff;
+                       border:none;
+                       border-radius:7px;
+                       cursor:pointer;
+                       font-size:14px;
+                       font-weight:600;">
+                + Add Product
+            </button>
+
+        </div>
+
+
+        <!-- PRODUCT FORM -->
+        <div id="product-form-container"
+             style="display:none;
+                    background:#fff;
+                    padding:24px;
+                    border-radius:12px;
+                    margin-bottom:24px;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+            <h4 id="form-title"
+                style="font-size:17px;
+                       color:#1a1a2e;
+                       margin-bottom:20px;">
+                Add Product
+            </h4>
+
+            <form id="product-form">
+
+                <input type="hidden" id="product-id">
+
+                <div style="display:grid;
+                            grid-template-columns:
+                            repeat(auto-fit,minmax(220px,1fr));
+                            gap:16px;">
+
+                    <div>
+                        <label>Product Name</label>
+                        <input
+                            type="text"
+                            id="product-name"
+                            required
+                            placeholder="Product name"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Category</label>
+                        <input
+                            type="text"
+                            id="product-category"
+                            required
+                            placeholder="Category"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Price (₹)</label>
+                        <input
+                            type="number"
+                            id="product-price"
+                            required
+                            min="0"
+                            placeholder="Price"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Stock</label>
+                        <input
+                            type="number"
+                            id="product-stock"
+                            required
+                            min="0"
+                            placeholder="Stock quantity"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div style="grid-column:1/-1;">
+                        <label>Image URL</label>
+                        <input
+                            type="url"
+                            id="product-image"
+                            required
+                            placeholder="https://..."
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div style="grid-column:1/-1;">
+                        <label>Description</label>
+                        <textarea
+                            id="product-description"
+                            required
+                            rows="4"
+                            placeholder="Product description"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;
+                                   resize:vertical;"></textarea>
+                    </div>
+
+                </div>
+
+
+                <div style="display:flex;
+                            gap:10px;
+                            margin-top:20px;">
+
+                    <button
+                        type="submit"
+                        id="submit-product-btn"
+                        style="padding:10px 20px;
+                               background:#27ae60;
+                               color:#fff;
+                               border:none;
+                               border-radius:6px;
+                               cursor:pointer;
+                               font-weight:600;">
+                        Add Product
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="closeProductForm()"
+                        style="padding:10px 20px;
+                               background:#eee;
+                               color:#333;
+                               border:none;
+                               border-radius:6px;
+                               cursor:pointer;">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+        <div id="products-container">
+            <div class="loading">
+                Loading products...
+            </div>
         </div>
 
     </section>
 
+
     <!-- FOOTER -->
     <footer>
-        <p>© 2024 ShopNow. All rights reserved.</p>
+        <p>© 2024 QuickCart. All rights reserved.</p>
     </footer>
+
 
     <div class="toast" id="toast"></div>
 
+
     <script src="js/auth.js"></script>
-    <script>
-        const getStatusColor = (status) => {
-            const colors = {
-                'Order Placed':     '#3498db',
-                'Being Packed':     '#f39c12',
-                'Shipped':          '#9b59b6',
-                'Out for Delivery': '#e67e22',
-                'Delivered':        '#27ae60',
-                'Cancelled':        '#e74c3c'
-            };
-            return colors[status] || '#888';
-        };
+    <script src="js/admin.js"></script>
 
-        const loadOrders = async () => {
-            const container = document.getElementById('orders-container');
-
-            try {
-                const res = await fetch(`${API}/orders`, {
-                    headers: {
-                        'Authorization': `Bearer ${getToken()}`
-                    }
-                });
-
-                const orders = await res.json();
-
-                if (orders.length === 0) {
-                    container.innerHTML =
-                        '<div class="empty">No orders yet</div>';
-                    return;
-                }
-
-                document.getElementById('total-orders').textContent =
-                    orders.length;
-                document.getElementById('pending-orders').textContent =
-                    orders.filter(o =>
-                        o.orderStatus !== 'Delivered' &&
-                        o.orderStatus !== 'Cancelled'
-                    ).length;
-                document.getElementById('delivered-orders').textContent =
-                    orders.filter(o =>
-                        o.orderStatus === 'Delivered'
-                    ).length;
-                document.getElementById('total-revenue').textContent =
-                    '₹' + orders
-                        .filter(o => o.orderStatus !== 'Cancelled')
-                        .reduce((sum, o) => sum + o.totalPrice, 0)
-                        .toLocaleString();
-
-                container.innerHTML = `
-                    <div style="overflow-x:auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Items</th>
-                                <th>Total</th>
-                                <th>Payment</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Update</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${orders.map(order => `
-                            <tr>
-                                <td style="font-weight:600;">
-                                    #${order._id.slice(-8).toUpperCase()}
-                                </td>
-                                <td>
-                                    <p style="font-weight:500;">
-                                        ${order.user ? order.user.name : 'N/A'}
-                                    </p>
-                                    <p style="font-size:12px; color:#888;">
-                                        ${order.user ? order.user.email : ''}
-                                    </p>
-                                </td>
-                                <td>
-                                    ${order.orderItems.map(item =>
-                                        `<p style="font-size:13px;">
-                                            ${item.name} × ${item.qty}
-                                        </p>`
-                                    ).join('')}
-                                </td>
-                                <td style="font-weight:700; color:#e94560;">
-                                    ₹${order.totalPrice.toLocaleString()}
-                                </td>
-                                <td>${order.paymentMethod}</td>
-                                <td>
-                                    ${new Date(order.createdAt)
-                                        .toLocaleDateString('en-IN')}
-                                </td>
-                                <td>
-                                    <span class="status-badge"
-                                          style="background:${getStatusColor(order.orderStatus)};">
-                                        ${order.orderStatus}
-                                    </span>
-                                </td>
-                                <td>
-                                    ${order.orderStatus !== 'Delivered' &&
-                                      order.orderStatus !== 'Cancelled' ? `
-                                    <select class="status-select"
-                                            onchange="updateStatus('${order._id}', this.value)"
-                                            id="select-${order._id}">
-                                        <option value="">Update Status</option>
-                                        <option value="Being Packed">Being Packed</option>
-                                        <option value="Shipped">Shipped</option>
-                                        <option value="Out for Delivery">Out for Delivery</option>
-                                        <option value="Delivered">Delivered</option>
-                                    </select>` : `
-                                    <span style="font-size:13px; color:#888;">
-                                        No actions
-                                    </span>`}
-                                </td>
-                            </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                    </div>`;
-
-            } catch (error) {
-                container.innerHTML =
-                    '<div class="empty">Failed to load orders</div>';
-            }
-        };
-
-        const updateStatus = async (orderId, newStatus) => {
-            if (!newStatus) return;
-
-            try {
-                const res = await fetch(`${API}/orders/${orderId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${getToken()}`
-                    },
-                    body: JSON.stringify({ orderStatus: newStatus })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    showToast(`Order updated to: ${newStatus}`);
-                    loadOrders();
-                } else {
-                    showToast(data.message);
-                }
-
-            } catch (error) {
-                showToast('Failed to update order status');
-            }
-        };
-
-        const user = getUser();
-        if (!user || !user.isAdmin) {
-            window.location.href = 'index.html';
-        } else {
-            loadOrders();
-        }
-    </script>
 </body>
 </html>

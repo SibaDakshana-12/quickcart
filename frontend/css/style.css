@@ -400,6 +400,103 @@ body {
     color: #888;
 }
 
+/* ORDER TRACKING PROGRESS BAR */
+.tracking-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    position: relative;
+    margin: 16px 0;
+}
+
+.tracking-bar::before {
+    content: '';
+    position: absolute;
+    top: 34px;
+    left: 24px;
+    right: 24px;
+    height: 3px;
+    background: #e0e0e0;
+    z-index: 0;
+}
+
+.tracking-progress-line {
+    position: absolute;
+    top: 34px;
+    left: 24px;
+    height: 3px;
+    background: #e94560;
+    z-index: 1;
+    transition: width 0.5s ease;
+}
+
+.tracking-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.tracking-step .step-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    border: 3px solid #e0e0e0;
+}
+
+.tracking-step.completed .step-icon {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+}
+
+.tracking-step.active .step-icon {
+    background: #e94560;
+    border-color: #e94560;
+    color: #fff;
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px rgba(233,69,96,0.2);
+}
+
+.tracking-step.cancelled .step-icon {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: #fff;
+}
+
+.tracking-step .step-label {
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+    font-weight: 500;
+    max-width: 70px;
+}
+
+.tracking-step.completed .step-label {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.tracking-step.active .step-label {
+    color: #e94560;
+    font-weight: 700;
+}
+
+.tracking-step.cancelled .step-label {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
 /* FOOTER */
 footer {
     background: #1a1a2e;
