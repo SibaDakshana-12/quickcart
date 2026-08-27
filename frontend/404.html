@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">QuickCart</a>
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+            <a href="login.html" id="nav-login">Login</a>
+            <a href="#" id="nav-logout" style="display:none">Logout</a>
+            <a href="admin.html" id="nav-admin" style="display:none; color:#e94560;">Admin</a>
+        </div>
+    </nav>
+
+    <!-- 404 CONTENT -->
+    <div style="text-align:center; padding:100px 40px;">
+
+        <div style="font-size:120px; font-weight:700;
+                    color:#e94560; line-height:1;
+                    margin-bottom:16px;">
+            404
+        </div>
+
+        <h2 style="font-size:28px; color:#1a1a2e;
+                   margin-bottom:12px;">
+            Page Not Found
+        </h2>
+
+        <p style="font-size:16px; color:#888;
+                  margin-bottom:40px; max-width:400px;
+                  margin-left:auto; margin-right:auto;">
+            Oops! The page you are looking for does not exist
+            or has been moved.
+        </p>
+
+        <div style="display:flex; gap:16px;
+                    justify-content:center; flex-wrap:wrap;">
+            <a href="index.html"
+               style="background:#e94560; color:#fff;
+                      padding:14px 32px; border-radius:8px;
+                      text-decoration:none; font-weight:600;
+                      font-size:15px; transition:background 0.2s;">
+                Go Home
+            </a>
+            <a href="products.html"
+               style="background:#1a1a2e; color:#fff;
+                      padding:14px 32px; border-radius:8px;
+                      text-decoration:none; font-weight:600;
+                      font-size:15px; transition:background 0.2s;">
+                Shop Products
+            </a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 QuickCart. All rights reserved.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

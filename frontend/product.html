@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - QuickCart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">QuickCart</a>
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="admin.html" id="nav-admin"
+               style="display:none; color:#e94560;">Admin</a>
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+            <a href="profile.html" id="nav-profile"
+               style="display:none">Profile</a>
+            <a href="login.html" id="nav-login">Login</a>
+            <a href="#" id="nav-logout" style="display:none">Logout</a>
+        </div>
+    </nav>
+
+    <!-- PRODUCT DETAIL -->
+    <section class="section">
+        <a href="products.html"
+           style="color:#888; text-decoration:none;
+                  font-size:14px; display:inline-block;
+                  margin-bottom:24px;">
+            ← Back to Products
+        </a>
+
+        <div id="product-container">
+            <div class="loading">Loading product...</div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 QuickCart. All rights reserved.</p>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        const getProductId = () => {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        };
+
+        const loadProduct = async () => {
+            const container = document.getElementById('product-container');
+            const productId = getProductId();
+
+            if (!productId) {
+                window.location.href = 'products.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/products/${productId}`);
+                const product = await res.json();
+
+                if (!res.ok) {
+                    container.innerHTML =
+                        '<div class="empty">Product not found</div>';
+                    return;
+                }
+
+                const stockStatus = product.stock === 0
+                    ? `<span style="color:#e74c3c; font-weight:600;">
+                           Out of Stock
+                       </span>`
+                    : product.stock <= 5
+                    ? `<span style="color:#f39c12; font-weight:600;">
+                           Only ${product.stock} left!
+                       </span>`
+                    : `<span style="color:#27ae60; font-weight:600;">
+                           In Stock (${product.stock} available)
+                       </span>`;
+
+                container.innerHTML = `
+                    <div style="display:grid;
+                                grid-template-columns:1fr 1fr;
+                                gap:40px; align-items:start;">
+
+                        <!-- IMAGE -->
+                        <div>
+                            <img src="${product.image}"
+                                 alt="${product.name}"
+                                 id="main-image"
+                                 style="width:100%; border-radius:16px;
+                                        object-fit:cover; max-height:480px;"
+                                 onerror="this.src='https://via.placeholder.com/500'">
+                        </div>
+
+                        <!-- DETAILS -->
+                        <div>
+                            <p style="color:#888; font-size:13px;
+                                      text-transform:uppercase;
+                                      margin-bottom:8px;">
+                                ${product.category}
+                            </p>
+
+                            <h1 style="font-size:28px; color:#1a1a2e;
+                                       margin-bottom:12px;">
+                                ${product.name}
+                            </h1>
+
+                            <p style="font-size:32px; font-weight:700;
+                                      color:#e94560; margin-bottom:16px;">
+                                ₹${product.price.toLocaleString()}
+                            </p>
+
+                            <p style="font-size:15px; color:#555;
+                                      line-height:1.7; margin-bottom:20px;">
+                                ${product.description}
+                            </p>
+
+                            <div style="margin-bottom:20px;">
+                                ${stockStatus}
+                            </div>
+
+                            <div style="display:flex;
+                                        align-items:center;
+                                        gap:12px; margin-bottom:24px;">
+                                <button onclick="decreaseQty()"
+                                    style="width:40px; height:40px;
+                                           border:1.5px solid #ddd;
+                                           border-radius:8px; background:#fff;
+                                           font-size:20px; cursor:pointer;">
+                                    −
+                                </button>
+                                <span id="qty-display"
+                                      style="font-size:18px;
+                                             font-weight:600;
+                                             min-width:32px;
+                                             text-align:center;">
+                                    1
+                                </span>
+                                <button onclick="increaseQty(${product.stock})"
+                                    style="width:40px; height:40px;
+                                           border:1.5px solid #ddd;
+                                           border-radius:8px; background:#fff;
+                                           font-size:20px; cursor:pointer;">
+                                    +
+                                </button>
+                            </div>
+
+                            <button
+                                onclick="addToCartDetail('${product._id}',
+                                         '${product.name}',
+                                         ${product.price},
+                                         '${product.image}',
+                                         ${product.stock})"
+                                ${product.stock === 0 ? 'disabled' : ''}
+                                style="width:100%; padding:16px;
+                                       background:${product.stock === 0 ?
+                                           '#ccc' : '#e94560'};
+                                       color:#fff; border:none;
+                                       border-radius:10px; font-size:16px;
+                                       font-weight:600; cursor:${product.stock === 0 ?
+                                           'not-allowed' : 'pointer'};
+                                       transition:background 0.2s;
+                                       margin-bottom:12px;"
+                                onmouseover="if(${product.stock > 0})
+                                             this.style.background='#c73652'"
+                                onmouseout="if(${product.stock > 0})
+                                            this.style.background='#e94560'">
+                                ${product.stock === 0 ?
+                                    'Out of Stock' : 'Add to Cart'}
+                            </button>
+
+                            <a href="cart.html"
+                               style="display:block; text-align:center;
+                                      color:#1a1a2e; text-decoration:none;
+                                      font-size:14px; padding:14px;
+                                      border:1.5px solid #1a1a2e;
+                                      border-radius:10px;
+                                      transition:all 0.2s;"
+                               onmouseover="this.style.background='#1a1a2e';
+                                            this.style.color='#fff'"
+                               onmouseout="this.style.background='transparent';
+                                           this.style.color='#1a1a2e'">
+                                View Cart
+                            </a>
+
+                            <div style="margin-top:24px; padding:16px;
+                                        background:#f9f9f9;
+                                        border-radius:10px;">
+                                <p style="font-size:13px; color:#888;
+                                          margin-bottom:4px;">
+                                    Payment Methods
+                                </p>
+                                <p style="font-size:14px; font-weight:500;">
+                                    Cash on Delivery · Online Payment
+                                </p>
+                            </div>
+                        </div>
+                    </div>`;
+
+            } catch (error) {
+                container.innerHTML =
+                    '<div class="empty">Failed to load product</div>';
+            }
+        };
+
+        let qty = 1;
+
+        const increaseQty = (stock) => {
+            if (qty < stock) {
+                qty++;
+                document.getElementById('qty-display').textContent = qty;
+            } else {
+                showToast('Cannot exceed available stock');
+            }
+        };
+
+        const decreaseQty = () => {
+            if (qty > 1) {
+                qty--;
+                document.getElementById('qty-display').textContent = qty;
+            }
+        };
+
+        const addToCartDetail = (id, name, price, image, stock) => {
+            if (stock === 0) return;
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {
+                existingItem.qty += qty;
+            } else {
+                cart.push({ id, name, price, image, qty });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            showToast(`${name} added to cart!`);
+        };
+
+        loadProduct();
+    </script>
+</body>
+</html>

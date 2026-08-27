@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - QuickCart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">QuickCart</a>
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+            <a href="profile.html" id="nav-profile" style="display:none">Profile</a>
+            <a href="login.html" id="nav-login">Login</a>
+            <a href="#" id="nav-logout" style="display:none">Logout</a>
+            <a href="admin.html" id="nav-admin" style="display:none; color:#e94560;">Admin</a>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="section">
+        <h2>All Products</h2>
+
+        <!-- SEARCH AND FILTER -->
+        <div style="display:flex; gap:16px; margin-bottom:32px; flex-wrap:wrap;">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search products..."
+                style="padding:10px 16px; border:1.5px solid #ddd;
+                       border-radius:8px; font-size:15px;
+                       outline:none; flex:1; min-width:200px;">
+
+            <select
+                id="category-filter"
+                style="padding:10px 16px; border:1.5px solid #ddd;
+                       border-radius:8px; font-size:15px;
+                       outline:none; background:#fff; cursor:pointer;">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Footwear">Footwear</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Books">Books</option>
+            </select>
+
+            <select
+                id="sort-filter"
+                style="padding:10px 16px; border:1.5px solid #ddd;
+                       border-radius:8px; font-size:15px;
+                       outline:none; background:#fff; cursor:pointer;">
+                <option value="">Sort By</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name A-Z</option>
+            </select>
+        </div>
+
+        <!-- RESULTS COUNT -->
+        <p id="results-count"
+           style="margin-bottom:16px; color:#888; font-size:14px;"></p>
+
+        <!-- PRODUCT GRID -->
+        <div class="product-grid" id="product-grid">
+            <div class="loading">Loading products...</div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 QuickCart. All rights reserved.</p>
+    </footer>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        let allProducts = [];
+
+        const loadProducts = async () => {
+            const grid = document.getElementById('product-grid');
+
+            try {
+                const res = await fetch(`${API}/products`);
+                allProducts = await res.json();
+                renderProducts(allProducts);
+            } catch (error) {
+                grid.innerHTML = '<div class="empty">Failed to load products</div>';
+            }
+        };
+
+        const renderProducts = (products) => {
+            const grid = document.getElementById('product-grid');
+            const countEl = document.getElementById('results-count');
+
+            countEl.textContent = `Showing ${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="empty">No products found</div>';
+                return;
+            }
+
+            grid.innerHTML = products.map(product => `
+                <div class="product-card"
+                    onclick="window.location.href='product.html?id=${product._id}'"
+                    style="cursor:pointer;">
+                    <img src="${product.image}"
+                        alt="${product.name}"
+                        onerror="this.src='https://via.placeholder.com/300x200'">
+                    <div class="card-body">
+                        <p class="category">${product.category}</p>
+                        <h3>${product.name}</h3>
+                        ${product.stock <= 5 && product.stock > 0
+                            ? `<p style="color:#f39c12; font-size:12px;
+                                        font-weight:600; margin-bottom:4px;">
+                                Only ${product.stock} left!
+                            </p>`
+                            : product.stock === 0
+                            ? `<p style="color:#e74c3c; font-size:12px;
+                                        font-weight:600; margin-bottom:4px;">
+                                Out of Stock
+                            </p>`
+                            : ''}
+                        <p class="price">₹${product.price.toLocaleString()}</p>
+                        <button class="btn-add"
+                            onclick="event.stopPropagation();
+                                    addToCart('${product._id}',
+                                    '${product.name}',
+                                    ${product.price},
+                                    '${product.image}')">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const filterAndSort = () => {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const category = document.getElementById('category-filter').value;
+            const sort = document.getElementById('sort-filter').value;
+
+            let filtered = allProducts.filter(product => {
+                const matchSearch = product.name.toLowerCase().includes(search) ||
+                                   product.description.toLowerCase().includes(search);
+                const matchCategory = category === '' || product.category === category;
+                return matchSearch && matchCategory;
+            });
+
+            if (sort === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sort === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            renderProducts(filtered);
+        };
+
+        const addToCart = (id, name, price, image) => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItem = cart.find(item => item.id === id);
+
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ id, name, price, image, qty: 1 });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            showToast(`${name} added to cart!`);
+        };
+
+        document.getElementById('search-input')
+            .addEventListener('input', filterAndSort);
+        document.getElementById('category-filter')
+            .addEventListener('change', filterAndSort);
+        document.getElementById('sort-filter')
+            .addEventListener('change', filterAndSort);
+
+        loadProducts();
+    </script>
+</body>
+</html>

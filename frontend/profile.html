@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - QuickCart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">QuickCart</a>
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+            <a href="profile.html" id="nav-profile" style="display:none">Profile</a>
+            <a href="login.html" id="nav-login">Login</a>
+            <a href="#" id="nav-logout" style="display:none">Logout</a>
+            <a href="admin.html" id="nav-admin" style="display:none; color:#e94560;">Admin</a>
+        </div>
+    </nav>
+
+    <!-- PROFILE SECTION -->
+    <section class="section">
+
+        <!-- SUCCESS MESSAGE -->
+        <div id="success-banner"
+             style="display:none; background:#d4edda; color:#155724;
+                    padding:16px 24px; border-radius:10px;
+                    margin-bottom:24px; font-size:15px;
+                    border:1px solid #c3e6cb;">
+            🎉 Order placed successfully! Your order is being processed.
+        </div>
+
+        <!-- USER INFO -->
+        <div style="background:#fff; border-radius:12px;
+                    padding:24px; margin-bottom:24px;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+                    display:flex; align-items:center; gap:20px;">
+
+            <div style="width:64px; height:64px; border-radius:50%;
+                        background:#e94560; display:flex;
+                        align-items:center; justify-content:center;
+                        font-size:28px; color:#fff; font-weight:700;">
+                <span id="user-initial">S</span>
+            </div>
+
+            <div>
+                <h2 style="font-size:22px; color:#1a1a2e;"
+                    id="user-name">Loading...</h2>
+                <p style="color:#888; font-size:15px;"
+                   id="user-email">Loading...</p>
+                <p style="color:#e94560; font-size:13px;
+                          font-weight:600; margin-top:4px;"
+                   id="user-role"></p>
+            </div>
+        </div>
+
+        <!-- MY ORDERS -->
+        <h3 style="font-size:20px; margin-bottom:16px; color:#1a1a2e;">
+            My Orders
+        </h3>
+
+        <div id="orders-container">
+            <div class="loading">Loading orders...</div>
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 QuickCart. All rights reserved.</p>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/socket.js"></script>
+    <script>
+        const getStatusColor = (status) => {
+            const colors = {
+                'Order Placed':     '#3498db',
+                'Being Packed':     '#f39c12',
+                'Shipped':          '#9b59b6',
+                'Out for Delivery': '#e67e22',
+                'Delivered':        '#27ae60',
+                'Cancelled':        '#e74c3c'
+            };
+            return colors[status] || '#888';
+        };
+
+        const loadProfile = () => {
+            const user = getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('user-email').textContent = user.email;
+            document.getElementById('user-initial').textContent =
+                user.name.charAt(0).toUpperCase();
+            document.getElementById('user-role').textContent =
+                user.isAdmin ? 'Admin' : 'Customer';
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('new') === 'true') {
+                document.getElementById('success-banner').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('success-banner').style.display = 'none';
+                }, 5000);
+            }
+        };
+
+        const loadOrders = async () => {
+            const container = document.getElementById('orders-container');
+
+            try {
+                const res = await fetch(`${API}/orders/myorders`, {
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`
+                    }
+                });
+
+                const orders = await res.json();
+
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty">
+                            <p style="font-size:16px; margin-bottom:16px;">
+                                No orders yet
+                            </p>
+                            <a href="products.html"
+                               style="color:#e94560; text-decoration:none;
+                                      font-weight:600;">
+                                Start Shopping →
+                            </a>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = orders.map(order => `
+                    <div style="background:#fff; border-radius:12px;
+                                padding:20px; margin-bottom:16px;
+                                box-shadow:0 2px 8px rgba(0,0,0,0.06);"
+                         id="order-${order._id}">
+
+                        <!-- ORDER HEADER -->
+                        <div style="display:flex; justify-content:space-between;
+                                    align-items:center; margin-bottom:16px;
+                                    flex-wrap:wrap; gap:8px;">
+                            <div>
+                                <p style="font-size:13px; color:#888;">
+                                    Order ID
+                                </p>
+                                <p style="font-size:14px; font-weight:600;
+                                          color:#1a1a2e;">
+                                    #${order._id.slice(-8).toUpperCase()}
+                                </p>
+                            </div>
+                            <div>
+                                <p style="font-size:13px; color:#888;">
+                                    Date
+                                </p>
+                                <p style="font-size:14px; font-weight:500;">
+                                    ${new Date(order.createdAt)
+                                        .toLocaleDateString('en-IN')}
+                                </p>
+                            </div>
+                            <div>
+                                <p style="font-size:13px; color:#888;">
+                                    Total
+                                </p>
+                                <p style="font-size:16px; font-weight:700;
+                                          color:#e94560;">
+                                    ₹${order.totalPrice.toLocaleString()}
+                                </p>
+                            </div>
+                            <div>
+                                <span id="badge-${order._id}"
+                                    style="padding:6px 14px;
+                                            border-radius:20px;
+                                            font-size:13px;
+                                            font-weight:600; color:#fff;
+                                            background:${getStatusColor(order.orderStatus)};">
+                                    ${order.orderStatus}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- ORDER ITEMS -->
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;
+                                    margin-bottom:16px;">
+                            ${order.orderItems.map(item => `
+                                <div style="display:flex; align-items:center;
+                                            gap:8px; background:#f9f9f9;
+                                            padding:8px 12px;
+                                            border-radius:8px;">
+                                    <img src="${item.image}"
+                                         style="width:36px; height:36px;
+                                                object-fit:cover;
+                                                border-radius:4px;"
+                                         onerror="this.src='https://via.placeholder.com/36'">
+                                    <div>
+                                        <p style="font-size:13px;
+                                                  font-weight:500;">
+                                            ${item.name}
+                                        </p>
+                                        <p style="font-size:12px; color:#888;">
+                                            Qty: ${item.qty}
+                                        </p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- SHIPPING ADDRESS -->
+                        <div style="font-size:13px; color:#888;
+                                    padding-top:12px;
+                                    border-top:1px solid #f0f0f0;">
+                            📍 ${order.shippingAddress.address},
+                            ${order.shippingAddress.city},
+                            ${order.shippingAddress.state} -
+                            ${order.shippingAddress.pincode}
+                        </div>
+
+                        <!-- CANCEL ORDER -->
+                        ${order.orderStatus === 'Order Placed' ? `
+                        <div style="margin-top:12px;">
+                            <button onclick="cancelOrder('${order._id}')"
+                                style="padding:8px 20px;
+                                    background:#ffe0e0; color:#c0392b;
+                                    border:none; border-radius:6px;
+                                    cursor:pointer; font-size:13px;
+                                    font-weight:600; transition:background 0.2s;"
+                                onmouseover="this.style.background='#ffcccc'"
+                                onmouseout="this.style.background='#ffe0e0'">
+                                Cancel Order
+                            </button>
+                        </div>` : ''}
+
+                        <!-- REAL TIME TRACKING BAR -->
+                        <div id="tracking-container-${order._id}">
+                            ${getProgressBar(order.orderStatus, order._id)}
+                        </div>
+                        <p style="display:none" id="status-text-${order._id}">
+                            ${order.orderStatus}
+                        </p>
+
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                container.innerHTML =
+                    '<div class="empty">Failed to load orders</div>';
+            }
+        };
+
+        const cancelOrder = async (orderId) => {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+
+            try {
+                const res = await fetch(`${API}/orders/${orderId}/cancel`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast('Order cancelled successfully');
+                    setTimeout(() => loadOrders(), 1000);
+                } else {
+                    showToast(data.message);
+                }
+
+            } catch (error) {
+                showToast('Failed to cancel order');
+            }
+        };
+
+        const getProgressBar = (status, orderId) => {
+            if (status === 'Cancelled') {
+                return `
+                    <div style="padding:12px 16px; background:#ffe0e0;
+                                border-radius:8px; border-left:4px solid #e74c3c;
+                                margin-top:16px;">
+                        <p style="color:#e74c3c; font-weight:600; font-size:14px;">
+                            ❌ Order Cancelled
+                        </p>
+                        <p style="color:#888; font-size:13px; margin-top:4px;">
+                            This order was cancelled. Stock has been restored.
+                        </p>
+                    </div>`;
+            }
+
+            const steps = [
+                { key: 'Order Placed', label: 'Order\nPlaced', icon: '📦' },
+                { key: 'Being Packed', label: 'Being\nPacked', icon: '🎁' },
+                { key: 'Shipped', label: 'Shipped', icon: '🚚' },
+                { key: 'Out for Delivery', label: 'Out for\nDelivery', icon: '🛵' },
+                { key: 'Delivered', label: 'Delivered', icon: '✅' }
+            ];
+
+            const currentIndex = steps.findIndex(s => s.key === status);
+            const progressWidth = currentIndex === 0 ? 0
+                : currentIndex === 1 ? 25
+                : currentIndex === 2 ? 50
+                : currentIndex === 3 ? 75
+                : 100;
+
+            return `
+                <div style="margin-top:16px; padding:16px;
+                            background:#f8f9fa; border-radius:10px;">
+                    <p style="font-size:13px; font-weight:600;
+                            color:#1a1a2e; margin-bottom:12px;">
+                        📍 Live Order Tracking
+                    </p>
+                    <div class="tracking-bar" id="tracking-${orderId}">
+                        <div class="tracking-progress-line"
+                            id="progress-line-${orderId}"
+                            style="width:${progressWidth}%">
+                        </div>
+                        ${steps.map((step, index) => `
+                            <div class="tracking-step ${
+                                index < currentIndex ? 'completed' :
+                                index === currentIndex ? 'active' : ''
+                            }" id="step-${orderId}-${index}">
+                                <div class="step-icon">
+                                    ${index <= currentIndex ? step.icon : '⭕'}
+                                </div>
+                                <div class="step-label">${step.label}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+        };
+
+        loadProfile();
+        loadOrders();
+        connectSocket();
+    </script>
+</body>
+</html>

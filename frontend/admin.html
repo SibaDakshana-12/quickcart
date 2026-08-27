@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - QuickCart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">QuickCart</a>
+
+        <div class="nav-links">
+            <a href="products.html">Products</a>
+
+            <a href="admin.html"
+               id="nav-admin"
+               style="display:none; color:#e94560;">
+                Admin
+            </a>
+
+            <a href="cart.html" class="cart-icon">
+                Cart
+                <span id="cart-count">0</span>
+            </a>
+
+            <a href="profile.html"
+               id="nav-profile"
+               style="display:none">
+                Profile
+            </a>
+
+            <a href="login.html" id="nav-login">
+                Login
+            </a>
+
+            <a href="#" id="nav-logout" style="display:none">
+                Logout
+            </a>
+        </div>
+    </nav>
+
+
+    <!-- ADMIN SECTION -->
+    <section class="section">
+
+        <h2>Admin Panel</h2>
+
+
+        <!-- STATS -->
+        <div class="admin-stats" id="admin-stats">
+
+            <div class="stat-card">
+                <div class="stat-number" id="total-orders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number" id="pending-orders">0</div>
+                <div class="stat-label">Pending Orders</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number" id="delivered-orders">0</div>
+                <div class="stat-label">Delivered Orders</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-number" id="total-revenue">
+                    ₹0
+                </div>
+                <div class="stat-label">Total Revenue</div>
+            </div>
+
+        </div>
+
+
+        <!-- ORDERS -->
+        <h3 style="font-size:18px;
+                   margin-bottom:16px;
+                   color:#1a1a2e;">
+            All Orders
+        </h3>
+
+        <div id="orders-container">
+            <div class="loading">
+                Loading orders...
+            </div>
+        </div>
+
+
+        <!-- PRODUCT MANAGEMENT -->
+        <div style="display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-top:40px;
+                    margin-bottom:16px;
+                    flex-wrap:wrap;
+                    gap:12px;">
+
+            <h3 style="font-size:18px;
+                       color:#1a1a2e;">
+                Product Management
+            </h3>
+
+            <button
+                onclick="openProductForm()"
+                style="padding:10px 18px;
+                       background:#e94560;
+                       color:#fff;
+                       border:none;
+                       border-radius:7px;
+                       cursor:pointer;
+                       font-size:14px;
+                       font-weight:600;">
+                + Add Product
+            </button>
+
+        </div>
+
+
+        <!-- PRODUCT FORM -->
+        <div id="product-form-container"
+             style="display:none;
+                    background:#fff;
+                    padding:24px;
+                    border-radius:12px;
+                    margin-bottom:24px;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+            <h4 id="form-title"
+                style="font-size:17px;
+                       color:#1a1a2e;
+                       margin-bottom:20px;">
+                Add Product
+            </h4>
+
+            <form id="product-form">
+
+                <input type="hidden" id="product-id">
+
+                <div style="display:grid;
+                            grid-template-columns:
+                            repeat(auto-fit,minmax(220px,1fr));
+                            gap:16px;">
+
+                    <div>
+                        <label>Product Name</label>
+                        <input
+                            type="text"
+                            id="product-name"
+                            required
+                            placeholder="Product name"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Category</label>
+                        <input
+                            type="text"
+                            id="product-category"
+                            required
+                            placeholder="Category"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Price (₹)</label>
+                        <input
+                            type="number"
+                            id="product-price"
+                            required
+                            min="0"
+                            placeholder="Price"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div>
+                        <label>Stock</label>
+                        <input
+                            type="number"
+                            id="product-stock"
+                            required
+                            min="0"
+                            placeholder="Stock quantity"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div style="grid-column:1/-1;">
+                        <label>Image URL</label>
+                        <input
+                            type="url"
+                            id="product-image"
+                            required
+                            placeholder="https://..."
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;">
+                    </div>
+
+                    <div style="grid-column:1/-1;">
+                        <label>Description</label>
+                        <textarea
+                            id="product-description"
+                            required
+                            rows="4"
+                            placeholder="Product description"
+                            style="width:100%;
+                                   padding:10px;
+                                   margin-top:6px;
+                                   border:1px solid #ddd;
+                                   border-radius:6px;
+                                   resize:vertical;"></textarea>
+                    </div>
+
+                </div>
+
+
+                <div style="display:flex;
+                            gap:10px;
+                            margin-top:20px;">
+
+                    <button
+                        type="submit"
+                        id="submit-product-btn"
+                        style="padding:10px 20px;
+                               background:#27ae60;
+                               color:#fff;
+                               border:none;
+                               border-radius:6px;
+                               cursor:pointer;
+                               font-weight:600;">
+                        Add Product
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="closeProductForm()"
+                        style="padding:10px 20px;
+                               background:#eee;
+                               color:#333;
+                               border:none;
+                               border-radius:6px;
+                               cursor:pointer;">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+        <div id="products-container">
+            <div class="loading">
+                Loading products...
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 QuickCart. All rights reserved.</p>
+    </footer>
+
+
+    <div class="toast" id="toast"></div>
+
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+
+</body>
+</html>
