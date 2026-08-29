@@ -407,41 +407,6 @@ For protected endpoints, include the JWT token in the request authorization head
 
 ---
 
-# 📸 Screenshots
-
-> Add screenshots of the major application interfaces here.
-
-Recommended screenshots:
-
-* 🏠 Home Page
-* 🛍️ Product Listing
-* 🔎 Product Details
-* 🛒 Shopping Cart
-* 💳 Checkout
-* 📦 Order Tracking
-* 🛠️ Admin Dashboard
-* ✏️ Product Management
-
-Example:
-
-```markdown
-## 📸 Screenshots
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Product Listing
-![Products](screenshots/products.png)
-
-### Order Tracking
-![Order Tracking](screenshots/order-tracking.png)
-
-### Admin Dashboard
-![Admin Dashboard](screenshots/admin.png)
-```
-
----
-
 # 🚀 Deployment
 
 QuickCart is deployed using:
